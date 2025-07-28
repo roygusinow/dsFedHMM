@@ -7,46 +7,73 @@
 #'
 #' @returns a list containing:
 #' @export
-grad_one_stepDS <- function(data, current_parameters, aggr_grad, model_params){
+grad_one_stepDS <- function(
+    data,
+    current_parameters,
+    aggr_grad,
+
+    # unloaded model params
+    covs,
+    bins,
+    conts,
+    visits,
+    labels,
+    n_states,
+    k_tup_initial,
+    k_tup_trans,
+    k_tup_em,
+    sim_no = "fed_test",
+    comments = ""
+    ){
   # at the server now. We should interface to julia
 
+  # k_tup <- list(
+  #   initial = c('x3', 'x8'),
+  #   trans   = c('x3', 'x8'),
+  #   em      = list('x1')
+  # )
+  # model_params <- c(
+  #   covs = c('x3', 'x8'),
+  #   bins  = c('bin1', 'bin2','bin3', 'bin4'),
+  #   conts = c('cont1', 'cont2'),
+  #   visits = c('v1','v2','v3','v4'),
+  #   labels = c('acute', '6-9months', '10-15months', '18-20months', '21-24months'), # spaces cause issues
+  #
+  #   n_states = 3,
+  #   k_tup = k_tup,
+  #   sim_no = 'fed_test',
+  #   comments = ''
+  # )
 
   data <- eval(parse(text=data), envir = parent.frame())
-  # print(data)
 
-  # print("current_parameters")
-  # print(current_parameters)
-  #
-  # print("model_params")
-  # print(model_params)
-  #
-  # print("k_tup")
-  # print(k_tup)
+  labels = c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
 
-  model_params$labels = c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
-  attr(model_params$k_tup, 'JLTYPE') <-
+  k_tup <- list(
+    initial = k_tup_initial,
+    trans   = k_tup_trans,
+    em      = k_tup_em
+  )
+  attr(k_tup, 'JLTYPE') <-
     'NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}'
-  # print("finsihed model_params")
-  # print(model_params)
 
   # connect to Julia and initialise the model
   Fed_HMM <- juliaImport("Fed_HMM")
 
   LTS_output <- Fed_HMM$create_sim_mod_data(
 
-    # df = df, # change from name to data in the server. Will change in DS implementation
     data,
 
     # data params
-    covs   = model_params$covs,
-    bins   = model_params$bins,
-    conts  = model_params$conts,
-    visits = model_params$visits,
-    labels = model_params$labels,
+    covs   = covs,
+    bins   = bins,
+    conts  = conts,
+    visits = visits,
+    labels = labels,
 
     # model params
-    n_states = model_params$n_states,
-    k_tup = model_params$k_tup,
+    n_states = n_states,
+    k_tup = k_tup,
     sim_no = "fed_test",
     comments = ""
 

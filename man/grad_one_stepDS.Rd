@@ -4,7 +4,22 @@
 \alias{grad_one_stepDS}
 \title{aggregate function}
 \usage{
-grad_one_stepDS(data, current_parameters, aggr_grad, model_params)
+grad_one_stepDS(
+  data,
+  current_parameters,
+  aggr_grad,
+  covs,
+  bins,
+  conts,
+  visits,
+  labels,
+  n_states,
+  k_tup_initial,
+  k_tup_trans,
+  k_tup_em,
+  sim_no = "fed_test",
+  comments = ""
+)
 }
 \arguments{
 \item{current_parameters}{a vector of current parameters}
