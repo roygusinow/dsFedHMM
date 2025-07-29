@@ -3,7 +3,6 @@
 #' @param current_parameters a vector of current parameters
 #' @param aggr_grad a vector of aggregated gradients
 #' @param data
-#' @param model_params a list of model parameters including:
 #'
 #' @returns a list containing:
 #' @export
@@ -13,6 +12,7 @@ grad_one_stepDS <- function(
     aggr_grad,
 
     # unloaded model params
+    # model_params,
     covs,
     bins,
     conts,
@@ -22,32 +22,27 @@ grad_one_stepDS <- function(
     k_tup_initial,
     k_tup_trans,
     k_tup_em,
-    sim_no = "fed_test",
-    comments = ""
+    sim_no,
+    comments
     ){
   # at the server now. We should interface to julia
 
-  # k_tup <- list(
-  #   initial = c('x3', 'x8'),
-  #   trans   = c('x3', 'x8'),
-  #   em      = list('x1')
-  # )
-  # model_params <- c(
-  #   covs = c('x3', 'x8'),
-  #   bins  = c('bin1', 'bin2','bin3', 'bin4'),
-  #   conts = c('cont1', 'cont2'),
-  #   visits = c('v1','v2','v3','v4'),
-  #   labels = c('acute', '6-9months', '10-15months', '18-20months', '21-24months'), # spaces cause issues
-  #
-  #   n_states = 3,
-  #   k_tup = k_tup,
-  #   sim_no = 'fed_test',
-  #   comments = ''
-  # )
-
   data <- eval(parse(text=data), envir = parent.frame())
 
-  labels = c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
+  # print("check")
+  covs <- as.character(unlist(strsplit(covs, split=",")))
+  bins <- as.character(unlist(strsplit(bins, split=",")))
+  conts <- as.character(unlist(strsplit(conts, split=",")))
+  visits <- as.character(unlist(strsplit(visits, split=",")))
+  # labels <- as.character(unlist(strsplit(labels, split=",")))
+  labels <- c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
+  n_states <- as.numeric(unlist(strsplit(n_states, split=",")))
+  k_tup_initial <- as.character(unlist(strsplit(k_tup_initial, split=",")))
+  k_tup_trans <- as.character(unlist(strsplit(k_tup_trans, split=",")))
+  k_tup_em <- list(unlist(strsplit(k_tup_em, split=",")))
+  sim_no <- as.character(unlist(strsplit(sim_no, split=",")))
+  comments <- as.character(unlist(strsplit(comments, split=",")))
+
 
   k_tup <- list(
     initial = k_tup_initial,
@@ -55,7 +50,13 @@ grad_one_stepDS <- function(
     em      = k_tup_em
   )
   attr(k_tup, 'JLTYPE') <-
-    'NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}'
+    "NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}"
+  # attr(model_params$k_tup, 'JLTYPE') <-
+  #   "NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}"
+  #
+  # print(k_tup)
+  # print(model_params$k_tup)
+  # print(identical(k_tup, model_params$k_tup))
 
   # connect to Julia and initialise the model
   Fed_HMM <- juliaImport("Fed_HMM")
@@ -65,18 +66,27 @@ grad_one_stepDS <- function(
     data,
 
     # data params
-    covs   = covs,
+    covs = covs,
     bins   = bins,
     conts  = conts,
     visits = visits,
     labels = labels,
 
-    # model params
+    # # model params
     n_states = n_states,
     k_tup = k_tup,
-    sim_no = "fed_test",
-    comments = ""
+    sim_no = sim_no,
+    comments = comments
 
+    # covs   = model_params$covs,
+    # bins   = model_params$bins,
+    # conts  = model_params$conts,
+    # visits = model_params$visits,
+    # labels = c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months'), # temp fix to formatting
+    # n_states = model_params$n_states,
+    # k_tup = model_params$k_tup
+    # sim_no = model_params$sim_no,
+    # comments = model_params$comments
   )
 
   output <- Fed_HMM$grad_one_step(
