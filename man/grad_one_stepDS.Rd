@@ -17,16 +17,16 @@ grad_one_stepDS(
   k_tup_initial,
   k_tup_trans,
   k_tup_em,
-  sim_no = "fed_test",
-  comments = ""
+  sim_no,
+  comments
 )
 }
 \arguments{
+\item{data}{}
+
 \item{current_parameters}{a vector of current parameters}
 
 \item{aggr_grad}{a vector of aggregated gradients}
-
-\item{model_params}{a list of model parameters including:}
 }
 \value{
 a list containing:

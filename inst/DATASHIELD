@@ -1,5 +1,6 @@
 AggregateMethods:
   grad_one_stepDS,
   test_funcDS,
-  julia_interface_testDS
+  julia_interface_testDS,
+  julia_output_testDS
 AssignMethods:
