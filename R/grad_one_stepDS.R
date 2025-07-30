@@ -29,6 +29,9 @@ grad_one_stepDS <- function(
 
   data <- eval(parse(text=data), envir = parent.frame())
 
+  current_parameters <- as.numeric(unlist(strsplit(current_parameters, split=",")))
+  aggr_grad <- as.numeric(unlist(strsplit(aggr_grad, split=",")))
+
   # print("check")
   covs <- as.character(unlist(strsplit(covs, split=",")))
   bins <- as.character(unlist(strsplit(bins, split=",")))
