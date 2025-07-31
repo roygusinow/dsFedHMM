@@ -3,5 +3,6 @@ AggregateMethods:
   test_funcDS,
   julia_interface_testDS,
   julia_output_testDS,
-  params_from_probs_testDS
+  params_from_probs_testDS,
+  grad_one_step_test_typeDS
 AssignMethods:
