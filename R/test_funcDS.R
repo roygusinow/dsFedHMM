@@ -7,5 +7,5 @@
 #' @export
 test_funcDS <- function(object, option){
 
-  return("Working Function2!")
+  return("Working Function3!")
 }
