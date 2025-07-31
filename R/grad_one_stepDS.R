@@ -92,18 +92,18 @@ grad_one_stepDS <- function(
     # comments = model_params$comments
   )
 
+  return("Done")
+
   next_grad <- Fed_HMM$grad_one_step(
     current_parameters,
     aggr_grad,
     LTS_output
   )
-  next_grad <- juliaGet(next_grad)
 
   likelihood <- Fed_HMM$get_lkl_val(
     current_parameters,
     LTS_output
   )
-  likelihood <- juliaGet(likelihood)
 
   return(list(
     next_grad = next_grad,
