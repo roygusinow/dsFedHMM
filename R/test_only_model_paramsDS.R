@@ -13,6 +13,8 @@ test_only_model_paramsDS <- function(
 ){
   # at the server now. We should interface to julia
 
+  library(JuliaConnectoR)
+
   data <- eval(parse(text=data), envir = parent.frame())
 
   current_parameters <- as.numeric(unlist(strsplit(current_parameters, split=",")))
@@ -38,7 +40,7 @@ test_only_model_paramsDS <- function(
   )
 
   # connect to Julia and initialise the model
-  Fed_HMM <- juliaImport("Fed_HMM")
+  Fed_HMM <- JuliaConnectoR::juliaImport("Fed_HMM")
 
   LTS_output <- Fed_HMM$create_sim_mod_data(
 
