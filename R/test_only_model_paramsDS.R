@@ -42,20 +42,22 @@ test_only_model_paramsDS <- function(
   # connect to Julia and initialise the model
   Fed_HMM <- JuliaConnectoR::juliaImport("Fed_HMM")
 
-  LTS_output <- Fed_HMM$create_sim_mod_data(
+  # LTS_output <- Fed_HMM$create_sim_mod_data(
+  #
+  #   data,
+  #
+  #   covs   = model_params$covs,
+  #   bins   = model_params$bins,
+  #   conts  = model_params$conts,
+  #   visits = model_params$visits,
+  #   labels = model_params$labels,
+  #   n_states = model_params$n_states,
+  #   k_tup = k_tup,
+  #   sim_no = model_params$sim_no,
+  #   comments = model_params$comments
+  # )
 
-    data,
-
-    covs   = model_params$covs,
-    bins   = model_params$bins,
-    conts  = model_params$conts,
-    visits = model_params$visits,
-    labels = model_params$labels,
-    n_states = model_params$n_states,
-    k_tup = k_tup,
-    sim_no = model_params$sim_no,
-    comments = model_params$comments
-  )
+  LTS_output <- Fed_HMM$create_sim_mod_data_no_args(data)
 
   next_grad <- Fed_HMM$grad_one_step(
     current_parameters,
