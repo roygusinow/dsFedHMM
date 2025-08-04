@@ -59,6 +59,8 @@ test_only_model_paramsDS <- function(
 
   LTS_output <- Fed_HMM$create_sim_mod_data_no_args(data)
 
+  return("finshed lts_out")
+
   next_grad <- Fed_HMM$grad_one_step(
     current_parameters,
     aggr_grad,
