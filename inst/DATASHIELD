@@ -2,9 +2,5 @@ AggregateMethods:
   grad_one_stepDS,
   test_funcDS,
   julia_interface_testDS,
-  julia_output_testDS,
-  params_from_probs_testDS,
-  grad_one_step_test_typeDS,
-  return_model_paramsDS,
-  test_only_model_paramsDS
+  julia_output_testDS
 AssignMethods:

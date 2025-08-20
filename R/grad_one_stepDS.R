@@ -19,9 +19,9 @@ grad_one_stepDS <- function(
     visits,
     labels,
     n_states,
-    k_tup_initial,
-    k_tup_trans,
-    k_tup_em,
+    covariate_tup_initial,
+    covariate_tup_trans,
+    covariate_tup_em,
     sim_no,
     comments
     ){
@@ -38,34 +38,29 @@ grad_one_stepDS <- function(
   bins <- as.character(unlist(strsplit(bins, split=",")))
   conts <- as.character(unlist(strsplit(conts, split=",")))
   visits <- as.character(unlist(strsplit(visits, split=",")))
-  # labels <- as.character(unlist(strsplit(labels, split=",")))
-  labels <- c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
+  labels <- as.character(unlist(strsplit(labels, split=",")))
+  # labels <- c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
+  # labels <- c("acute", "6-9_months", "10-15_months", "18-20_months", "21-24_months")
   n_states <- as.numeric(unlist(strsplit(n_states, split=",")))
-  k_tup_initial <- as.character(unlist(strsplit(k_tup_initial, split=",")))
-  k_tup_trans <- as.character(unlist(strsplit(k_tup_trans, split=",")))
-  k_tup_em <- list(unlist(strsplit(k_tup_em, split=",")))
+  covariate_tup_initial <- as.list(strsplit(covariate_tup_initial, split=",")[[1]])
+  covariate_tup_trans <- as.list(strsplit(covariate_tup_trans, split=",")[[1]])
+  covariate_tup_em <- list()
   sim_no <- as.character(unlist(strsplit(sim_no, split=",")))
   comments <- as.character(unlist(strsplit(comments, split=",")))
 
-
-  k_tup <- list(
-    initial = k_tup_initial,
-    trans   = k_tup_trans,
-    em      = k_tup_em
+  covariate_tup <- list(
+    initial = covariate_tup_initial,
+    trans   = covariate_tup_trans,
+    em      = covariate_tup_em
   )
-  attr(k_tup, 'JLTYPE') <-
-    "NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}"
-  # attr(model_params$k_tup, 'JLTYPE') <-
-  #   "NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}"
-  #
-  # print(k_tup)
-  # print(model_params$k_tup)
-  # print(identical(k_tup, model_params$k_tup))
+
+  # return(labels)
+  attr(covariate_tup, "JLTYPE") <- "NamedTuple{(:initial,:trans,:em),Tuple{Vector{String},Vector{String},Vector{String}}}"
 
   # connect to Julia and initialise the model
-  Fed_HMM <- juliaImport("Fed_HMM")
+  LTA <- juliaImport("LTA")
 
-  LTS_output <- Fed_HMM$create_sim_mod_data(
+  LTS_output <- LTA$create_sim_mod_data(
 
     data,
 
@@ -78,30 +73,18 @@ grad_one_stepDS <- function(
 
     # # model params
     n_states = n_states,
-    k_tup = k_tup,
+    covariate_tup = covariate_tup,
     sim_no = sim_no,
     comments = comments
-
-    # covs   = model_params$covs,
-    # bins   = model_params$bins,
-    # conts  = model_params$conts,
-    # visits = model_params$visits,
-    # labels = c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months'), # temp fix to formatting
-    # n_states = model_params$n_states,
-    # k_tup = model_params$k_tup
-    # sim_no = model_params$sim_no,
-    # comments = model_params$comments
   )
 
-  # return("Done")
-
-  next_grad <- Fed_HMM$grad_one_step(
+  next_grad <- LTA$grad_one_step(
     current_parameters,
     aggr_grad,
     LTS_output
   )
 
-  likelihood <- Fed_HMM$get_lkl_val(
+  likelihood <- LTA$get_lkl_val(
     current_parameters,
     LTS_output
   )
