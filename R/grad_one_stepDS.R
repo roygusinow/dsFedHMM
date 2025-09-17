@@ -27,24 +27,35 @@ grad_one_stepDS <- function(
     ){
   # at the server now. We should interface to julia
 
+  process_mod_param <- function(param, inside=FALSE) {
+    if (inside) {
+      out <- as.list(strsplit(param, split=",")[[1]])
+    }else{
+      out <- as.list(strsplit(param, split=","))[[1]]
+    }
+
+    if (length(out) == 0) {
+      return(list())
+    } else {
+      return(out)
+    }
+  }
+
   data <- eval(parse(text=data), envir = parent.frame())
   data <- sanitize_df_for_julia(data)
 
   current_parameters <- as.numeric(unlist(strsplit(current_parameters, split=",")))
   aggr_grad <- as.numeric(unlist(strsplit(aggr_grad, split=",")))
 
-  # print("check")
-  covs <- as.character(unlist(strsplit(covs, split=",")))
-  bins <- as.character(unlist(strsplit(bins, split=",")))
-  conts <- as.character(unlist(strsplit(conts, split=",")))
-  visits <- as.character(unlist(strsplit(visits, split=",")))
-  labels <- as.character(unlist(strsplit(labels, split=",")))
-  # labels <- c('acute', '6-9 months', '10-15 months', '18-20 months', '21-24 months') # temp fix to formatting
-  # labels <- c("acute", "6-9_months", "10-15_months", "18-20_months", "21-24_months")
+  covs <- process_mod_param(covs)
+  bins <- process_mod_param(bins)
+  conts <- process_mod_param(conts)
+  visits <- process_mod_param(visits)
+  labels <- process_mod_param(labels)
   n_states <- as.numeric(unlist(strsplit(n_states, split=",")))
-  covariate_tup_initial <- as.list(strsplit(covariate_tup_initial, split=",")[[1]])
-  covariate_tup_trans <- as.list(strsplit(covariate_tup_trans, split=",")[[1]])
-  covariate_tup_em <- list()
+  covariate_tup_initial <- process_mod_param(covariate_tup_initial, inside = TRUE)
+  covariate_tup_trans <- process_mod_param(covariate_tup_trans, inside = TRUE)
+  covariate_tup_em <- process_mod_param(covariate_tup_em)
   sim_no <- as.character(unlist(strsplit(sim_no, split=",")))
   comments <- as.character(unlist(strsplit(comments, split=",")))
 
