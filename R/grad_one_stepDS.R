@@ -34,7 +34,7 @@ grad_one_stepDS <- function(
       out <- as.list(strsplit(param, split=","))[[1]]
     }
 
-    if (length(out) == 0) {
+    if (out[1] == "NA") {
       return(list())
     } else {
       return(out)
