@@ -4,3 +4,6 @@ AggregateMethods:
   julia_interface_testDS,
   julia_output_testDS
 AssignMethods:
+Options:
+  clipping_threshold = 1,
+  noise_multiplier = 1
